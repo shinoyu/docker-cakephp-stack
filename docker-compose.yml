@@ -1,5 +1,18 @@
 version: '3.5'
 services:
+  app:
+    build: 
+      context: .
+      dockerfile: ./app/Dockerfile
+    command: >
+      bin/cake server --port 9000 -H 0.0.0.0
+    ports:
+      - '9000:9000'
+    volumes:
+    - ./html:/var/www/html
+    depends_on: 
+      - mysql
+
   mysql:
     image: mysql:5.7
     volumes:
@@ -9,20 +22,7 @@ services:
       - 13306:3306
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=test
+      - MYSQL_DATABASE=root
       - MYSQL_USER=test
       - MYSQL_PASSWORD=test
       - TZ=Asia/Tokyo
-    restart: always
-
-  php-cake:
-    build: ./php-cake
-    environment:
-      TZ: 'Asia/Tokyo'
-    volumes:
-      - ./php-cake/php.ini:/usr/local/etc/php/php.ini
-      - ./html:/var/www/html
-    depends_on:
-      - mysql
-    restart: always
-
